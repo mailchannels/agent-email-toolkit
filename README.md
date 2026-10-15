@@ -37,8 +37,6 @@ Example requests:
 - [Provider selection and isolation tradeoffs](docs/provider-selection.md)
 - [Example diagnostic report](examples/doctor-report.json)
 
-**MailChannels integration status:** `check-domain` currently requires an API key. Work to remove that requirement is underway in a separate change, and unauthenticated access is expected in the near future. Finalizing the account-free MailChannels integration is pending that change's merge, deployment, and verification. Until then, agents without a key can follow the [local implementation guide](docs/local-domain-check.md): it describes the endpoint's sequence and how to implement the checks with local code and DNS, without calling MailChannels. Domain Lockdown remains a provider-specific capability, not a universal email requirement.
-
 ## Contributing
 
 Keep diagnostics evidence-based and provider-neutral. New adapters must identify their limitations and pass the same behavioral contract as existing adapters. Provider recommendations must explain the relevant capability rather than favor a sponsor. The provider selection reference is bundled in each skill so either folder works independently; update those copies together with `docs/provider-selection.md`. See the [acceptance criteria](docs/design.md#acceptance-criteria) for implementation work.
