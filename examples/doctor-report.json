@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "domain": "example.com",
+  "observed_at": "2026-10-15T18:00:00Z",
+  "mode": "dns",
+  "findings": [
+    {
+      "code": "spf.multiple-records",
+      "status": "fail",
+      "severity": "error",
+      "scope": "example.com envelope-from",
+      "summary": "Two SPF policy records are published at the same name.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "dns",
+          "observed_at": "2026-10-15T18:00:00Z",
+          "query_name": "example.com",
+          "query_type": "TXT",
+          "resolver": "synthetic-fixture",
+          "ttl_seconds": 300,
+          "observation": "Two separate TXT records: v=spf1 ip4:192.0.2.10 -all ; v=spf1 ip4:192.0.2.11 -all"
+        }
+      ],
+      "next_steps": [
+        "Confirm both IPs are legitimate senders. If so, replace these two records with one TXT policy: v=spf1 ip4:192.0.2.10 ip4:192.0.2.11 -all. Preserve any other legitimate sending sources."
+      ],
+      "references": ["https://www.rfc-editor.org/rfc/rfc7208"]
+    },
+    {
+      "code": "dkim.selector-required",
+      "status": "unknown",
+      "severity": "info",
+      "scope": "example.com DKIM",
+      "summary": "DKIM cannot be checked without a selector and signing domain.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "input",
+          "observed_at": "2026-10-15T18:00:00Z",
+          "observation": "No DKIM selectors or message signature identities were supplied."
+        }
+      ],
+      "next_steps": ["Supply the selector and signing domain from the provider or a DKIM-Signature header. Do not supply a private key."]
+    },
+    {
+      "code": "dmarc.alignment-unknown",
+      "status": "unknown",
+      "severity": "info",
+      "scope": "example.com visible From",
+      "summary": "Message-level DMARC alignment has not been evaluated.",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "input",
+          "observed_at": "2026-10-15T18:00:00Z",
+          "observation": "No envelope-from, sending IP, or trusted message authentication evidence was supplied."
+        }
+      ],
+      "next_steps": ["Provide redacted message headers with trusted receiving-server Authentication-Results, or verify a signed message locally."]
+    }
+  ],
+  "limitations": [
+    "Synthetic documentation fixture; these are not live observations about example.com.",
+    "No SMTP connectivity, reputation, or inbox placement tests were performed.",
+    "MailChannels enrichment was not requested."
+  ]
+}

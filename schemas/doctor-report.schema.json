@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Email Doctor report v1",
+  "description": "Evidence-based diagnostic output. A completed report can contain unknown checks and limitations.",
+  "type": "object",
+  "required": ["schema_version", "domain", "observed_at", "mode", "findings", "limitations"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "domain": { "type": "string", "minLength": 1, "description": "Normalized ASCII domain, without a trailing dot." },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "mode": { "enum": ["dns", "evidence", "smtp_probe", "combined"] },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["code", "status", "severity", "scope", "summary", "confidence", "evidence", "next_steps"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z0-9_-]+)+$" },
+        "status": { "enum": ["pass", "fail", "unknown", "not_applicable"] },
+        "severity": { "enum": ["error", "warning", "info"] },
+        "scope": { "type": "string", "minLength": 1, "description": "Identity, DNS name, network target, or provider-specific boundary being checked." },
+        "summary": { "type": "string", "minLength": 1 },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidence" } },
+        "next_steps": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "references": { "type": "array", "items": { "type": "string", "format": "uri" } }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["source", "observed_at", "observation"],
+      "properties": {
+        "source": { "enum": ["dns", "mailchannels", "headers", "smtp_log", "smtp_probe", "configuration", "input"] },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "observation": { "type": "string", "minLength": 1 },
+        "query_name": { "type": "string" },
+        "query_type": { "type": "string" },
+        "resolver": { "type": "string" },
+        "ttl_seconds": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
